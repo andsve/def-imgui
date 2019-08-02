@@ -12,7 +12,13 @@
 
 // include the Defold SDK
 #include <dmsdk/sdk.h>
+// #define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
 #include "imgui/imgui.h"
+extern "C" {
+    #include "cimgui.h"
+}
+// #define
+// #include "imgui/cimgui.h"
 // #include "imgui/imgui_impl_defold.h"
 #include "imgui/imgui_impl_opengl2.h"
 
@@ -61,14 +67,12 @@ static int ImguiSetMouseInput(lua_State* L)
 static int ImguiTest(lua_State* L)
 {
     int top = lua_gettop(L);
-    ImGui_ImplOpenGL2_NewFrame();
     ImGuiIO& io = ImGui::GetIO();
 
 
     IM_ASSERT(io.Fonts->IsBuilt() && "Font atlas not built! It is generally built by the renderer back-end. Missing call to renderer _NewFrame() function? e.g. ImGui_ImplOpenGL3_NewFrame().");
     io.DisplaySize = ImVec2(luaL_checknumber(L, 1), luaL_checknumber(L, 2));
 
-    ImGui::NewFrame();
     ImGui::ShowDemoWindow();
     assert(top == lua_gettop(L));
     return 0;
@@ -82,8 +86,10 @@ static const luaL_reg Module_methods[] =
     {0, 0}
 };
 
+
 static void LuaInit(lua_State* L)
 {
+    printf("igGetVersion: %s\n", igGetVersion());
     int top = lua_gettop(L);
 
     // Register lua names
@@ -106,6 +112,15 @@ static dmExtension::Result InitializeImgui(dmExtension::Params* params)
     // Init Lua
     LuaInit(params->m_L);
     printf("Registered %s Extension\n", MODULE_NAME);
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize = ImVec2(960, 640);
+    return dmExtension::RESULT_OK;
+}
+
+static dmExtension::Result UpdateImgui(dmExtension::Params* params)
+{
+    ImGui_ImplOpenGL2_NewFrame();
+    ImGui::NewFrame();
     return dmExtension::RESULT_OK;
 }
 
@@ -142,4 +157,4 @@ static dmExtension::Result FinalizeImgui(dmExtension::Params* params)
 
 // imgui is the C++ symbol that holds all relevant extension data.
 // It must match the name field in the `ext.manifest`
-DM_DECLARE_EXTENSION2(imgui, LIB_NAME, AppInitializeImgui, AppFinalizeImgui, InitializeImgui, 0, 0, FinalizeImgui, PostRenderImgui)
+DM_DECLARE_EXTENSION2(imgui, LIB_NAME, AppInitializeImgui, AppFinalizeImgui, InitializeImgui, UpdateImgui, 0, FinalizeImgui, PostRenderImgui)

@@ -14,10 +14,14 @@ package = se.svenandersson.defimgui
 
 [project]
 title = def-imgui
+bundle_resources = /bundling
 
 [ios]
 bundle_identifier = se.svenandersson.defimgui
 
 [osx]
 bundle_identifier = se.svenandersson.defimgui
+
+[library]
+include_dirs = imgui
 
