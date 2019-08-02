@@ -1,0 +1,12 @@
+images {
+  image: "/main/fs.png"
+}
+images {
+  image: "/main/icon_144.png"
+}
+images {
+  image: "/main/icon_192_bg.png"
+}
+margin: 0
+extrude_borders: 2
+inner_padding: 0

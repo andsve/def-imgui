@@ -1,0 +1,23 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 960
+height = 640
+
+[android]
+input_method = HiddenInputField
+package = se.svenandersson.defimgui
+
+[project]
+title = def-imgui
+
+[ios]
+bundle_identifier = se.svenandersson.defimgui
+
+[osx]
+bundle_identifier = se.svenandersson.defimgui
+

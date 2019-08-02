@@ -1,0 +1,60 @@
+local function win_listener(self, event, data)
+	if event == window.WINDOW_EVENT_RESIZED then
+		self.w = data.width
+		self.h = data.height
+	end
+end
+
+function init(self)
+	window.set_listener(win_listener)
+	msg.post(".", "acquire_input_focus")
+
+	self.mx = 0
+	self.my = 0
+	self.mouse_1 = 0
+	self.mouse_2 = 0
+	self.mouse_3 = 0
+	self.mouse_wheel_y = 0
+	self.w = tonumber(sys.get_config("display.width"))
+	self.h = tonumber(sys.get_config("display.height"))
+	print(self.w, self.h)
+end
+
+function update(self, dt)
+	imgui.test(self.w, self.h)
+end
+
+function on_message(self, message_id, message, sender)
+	
+end
+
+function on_input(self, action_id, action)
+	if action_id == nil then
+		-- mouse move
+		self.mx = action.screen_x
+		self.my = self.h - action.screen_y
+	elseif action_id == hash("mouse_1") then
+		if action.pressed then
+			self.mouse_1 = 1
+		elseif action.released then
+			self.mouse_1 = 0
+		end
+	elseif action_id == hash("mouse_2") then
+		if action.pressed then
+			self.mouse_2 = 1
+		elseif action.released then
+			self.mouse_2 = 0
+		end
+	elseif action_id == hash("mouse_3") then
+		if action.pressed then
+			self.mouse_3 = 1
+		elseif action.released then
+			self.mouse_3 = 0
+		end
+	elseif action_id == hash("mouse_wheel_up") then
+		self.mouse_wheel_y = action.value
+	elseif action_id == hash("mouse_wheel_down") then
+		self.mouse_wheel_y = -action.value
+	end
+	imgui.set_mouse_input(self.mx, self.my, self.mouse_1, self.mouse_2, self.mouse_3, self.mouse_wheel_y)
+end
