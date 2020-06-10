@@ -7,7 +7,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl.h>
 #else
-#include <GL/gl.h>
+#include <gl/GL.h>
 #endif
 
 // include the Defold SDK
@@ -93,23 +93,8 @@ static void LuaInit(lua_State* L)
     assert(top == lua_gettop(L));
 }
 
-static dmExtension::Result AppInitializeImgui(dmExtension::AppParams* params)
-{
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
 
-    return dmExtension::RESULT_OK;
-}
-
-static dmExtension::Result InitializeImgui(dmExtension::Params* params)
-{
-    // Init Lua
-    LuaInit(params->m_L);
-    printf("Registered %s Extension\n", MODULE_NAME);
-    return dmExtension::RESULT_OK;
-}
-
-static void PostRenderImgui(dmExtension::AppParams* params)
+static dmExtension::Result PostRenderImgui(dmExtension::Params* params)
 {
     // if (event->m_Event == dmExtension::EVENT_ID_POST_RENDER) {
         // clean state
@@ -122,8 +107,29 @@ static void PostRenderImgui(dmExtension::AppParams* params)
         // ImGui::ShowDemoWindow();
         ImGui::Render();
         ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
-    // }
+        // }
+
+        return dmExtension::RESULT_OK;
+    }
+
+    
+static dmExtension::Result AppInitializeImgui(dmExtension::AppParams* params)
+{
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    dmExtension::RegisterCallback(dmExtension::CALLBACK_POST_RENDER, PostRenderImgui );
+    return dmExtension::RESULT_OK;
 }
+
+static dmExtension::Result InitializeImgui(dmExtension::Params* params)
+{
+    // Init Lua
+    LuaInit(params->m_L);
+    printf("Registered %s Extension\n", MODULE_NAME);
+    return dmExtension::RESULT_OK;
+}
+
+
 
 static dmExtension::Result AppFinalizeImgui(dmExtension::AppParams* params)
 {
@@ -142,4 +148,4 @@ static dmExtension::Result FinalizeImgui(dmExtension::Params* params)
 
 // imgui is the C++ symbol that holds all relevant extension data.
 // It must match the name field in the `ext.manifest`
-DM_DECLARE_EXTENSION2(imgui, LIB_NAME, AppInitializeImgui, AppFinalizeImgui, InitializeImgui, 0, 0, FinalizeImgui, PostRenderImgui)
+DM_DECLARE_EXTENSION(imgui, LIB_NAME, AppInitializeImgui, AppFinalizeImgui, InitializeImgui, 0, 0, FinalizeImgui)
